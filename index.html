@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>병원 예약 시스템</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #f0f5ff;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+    .container {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 2rem;
+      align-items: center;
+      justify-content: center;
+    }
+    .step {
+      display: none;
+      width: 100%;
+      max-width: 500px;
+      text-align: center;
+    }
+    .step.active {
+      display: block;
+    }
+    input, select, button {
+      width: 100%;
+      padding: 1rem;
+      margin-top: 2rem;
+      font-size: 1.5rem;
+    }
+    .main {
+      padding: 2rem;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+    .block {
+      background-color: #e6f7ff;
+      border: 1px solid #ccc;
+      padding: 2rem;
+      border-radius: 0.5rem;
+      text-align: center;
+      font-size: 1.2rem;
+    }
+    .scroll-box {
+      border-top: 2px solid #ccc;
+      padding-top: 1rem;
+      height: 200px;
+      overflow-y: scroll;
+      background-color: #ffffff;
+      margin-bottom: 2rem;
+    }
+    .scroll-box p {
+      margin: 0.5rem 0;
+    }
+    footer {
+      position: relative;
+      text-align: center;
+      padding: 1rem;
+      background-color: #fff;
+    }
+    .voice-button {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background-color: #00bcd4;
+      color: white;
+      font-size: 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto;
+      cursor: pointer;
+    }
+
+    .btn{
+      border: 0px;
+      border-radius: 15px;
+      background-color: #0f0a00;
+      font-weight: bold;
+      color: seashell;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div id="step1" class="step active">
+      <h2 style="font-size: 2rem;">나이를 입력하세요</h2>
+      <input type="number" style="width: auto;" id="age" placeholder="나이 입력">
+      <button class="btn" onclick="nextStep(1)">다음</button>
+    </div>
+
+    <div id="step2" class="step">
+      <h2 style="font-size: 2rem;">성별을 선택하세요</h2>
+      <select id="gender">
+        <option value="">선택</option>
+        <option value="남성">남성</option>
+        <option value="여성">여성</option>
+      </select>
+      <button class="btn" onclick="nextStep(2)">다음</button>
+    </div>
+
+    <div id="step3" class="step">
+      <h2 style="font-size: 2rem;">현재 앓고 있는 지병을 입력하세요</h2>
+      <input type="text" id="illness" placeholder="지병 입력">
+      <button onclick="nextStep(3)">다음</button>
+    </div>
+
+    <div id="step4" class="step">
+      <h2 style="font-size: 2rem;">나의 위치를 입력하세요</h2>
+      <input type="text" id="location" placeholder="예: 서울특별시 강남구">
+      <button onclick="nextStep(4)">제출</button>
+    </div>
+
+    <div id="main" class="step main">
+      <h2>진료과 선택</h2>
+      <div class="grid">
+        <div class="block">이비인후과</div>
+        <div class="block">가정의학과</div>
+        <div class="block">정형외과</div>
+        <div class="block">피부과</div>
+        <div class="block">정신건강</div>
+        <div class="block">응급실</div>
+      </div>
+      <h3>📍 주변 병원</h3>
+      <div class="scroll-box">
+        <p>서울 강남병원 - 300m</p>
+        <p>서울 한빛 이비인후과 - 500m</p>
+        <p>강남 서울의원 - 700m</p>
+        <p>더 건강한 의원 - 1.1km</p>
+        <p>미소 정신과의원 - 1.3km</p>
+      </div>
+      <p id="summary"></p>
+    </div>
+  </div>
+
+  <footer>
+    <div class="voice-button" onclick="startVoiceGPT()">🎤</div>
+  </footer>
+
+  <script>
+    let userInfo = {};
+
+    function nextStep(step) {
+      if (step === 1) {
+        userInfo.age = document.getElementById('age').value;
+        if (!userInfo.age) return alert('나이를 입력하세요');
+      }
+      if (step === 2) {
+        userInfo.gender = document.getElementById('gender').value;
+        if (!userInfo.gender) return alert('성별을 선택하세요');
+      }
+      if (step === 3) {
+        userInfo.illness = document.getElementById('illness').value;
+        if (!userInfo.illness) return alert('지병을 입력하세요');
+      }
+      if (step === 4) {
+        userInfo.location = document.getElementById('location').value;
+        if (!userInfo.location) return alert('위치를 입력하세요');
+
+        document.getElementById('summary').innerText = 
+          `나이: ${userInfo.age}, 성별: ${userInfo.gender}, 지병: ${userInfo.illness}, 위치: ${userInfo.location}`;
+      }
+      document.getElementById(`step${step}`).classList.remove('active');
+      if (step < 4) {
+        document.getElementById(`step${step + 1}`).classList.add('active');
+      } else {
+        document.getElementById('main').classList.add('active');
+      }
+    }
+
+    function startVoiceGPT() {
+      alert("음성 인식을 시작합니다...\n예: '나 목이 아프고 콧물이 나와'\n→ 감기 증상이 의심됩니다. 가까운 이비인후과를 소개해드리겠습니다.");
+      // 실제 GPT 음성 API 연동은 여기에 추가
+    }
+  </script>
+</body>
+</html>
+
+
+
