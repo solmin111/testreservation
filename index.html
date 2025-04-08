@@ -8,7 +8,7 @@
     body {
       margin: 0;
       font-family: Arial, sans-serif;
-      background-color: #f0f5ff;
+      background-color: #f0f8ff;
       display: flex;
       flex-direction: column;
       height: 100vh;
@@ -19,8 +19,6 @@
       justify-content: center;
       align-items: center;
       padding: 2rem;
-      align-items: center;
-      justify-content: center;
     }
     .step {
       display: none;
@@ -36,6 +34,13 @@
       padding: 1rem;
       margin-top: 2rem;
       font-size: 1.5rem;
+    }
+    .location-input {
+      display: flex;
+      gap: 0.5rem;
+    }
+    .location-input input {
+      flex: 1;
     }
     .main {
       padding: 2rem;
@@ -85,6 +90,10 @@
       cursor: pointer;
     }
 
+    .btnLocation{
+        width: auto;
+    }
+
     .btn{
       border: 0px;
       border-radius: 15px;
@@ -114,14 +123,17 @@
 
     <div id="step3" class="step">
       <h2 style="font-size: 2rem;">현재 앓고 있는 지병을 입력하세요</h2>
-      <input type="text" id="illness" placeholder="지병 입력">
-      <button onclick="nextStep(3)">다음</button>
+      <input type="text" style="width: auto;" id="illness" placeholder="지병 입력">
+      <button class="btn" onclick="nextStep(3)">다음</button>
     </div>
 
     <div id="step4" class="step">
       <h2 style="font-size: 2rem;">나의 위치를 입력하세요</h2>
-      <input type="text" id="location" placeholder="예: 서울특별시 강남구">
-      <button onclick="nextStep(4)">제출</button>
+      <div class="location-input">
+        <input type="text" style="width: auto;" id="location" placeholder="예: 서울특별시 강남구">
+        <button class="btnLocation" onclick="getCurrentLocation()">📍</button>
+      </div>
+      <button class="btn" onclick="nextStep(4)">제출</button>
     </div>
 
     <div id="main" class="step main">
@@ -181,6 +193,20 @@
       }
     }
 
+    function getCurrentLocation() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function(position) {
+          const lat = position.coords.latitude;
+          const lon = position.coords.longitude;
+          document.getElementById('location').value = `위도: ${lat.toFixed(5)}, 경도: ${lon.toFixed(5)}`;
+        }, function(error) {
+          alert('위치 정보를 가져올 수 없습니다. 위치 권한을 확인하세요.');
+        });
+      } else {
+        alert('이 브라우저에서는 GPS를 지원하지 않습니다.');
+      }
+    }
+
     function startVoiceGPT() {
       alert("음성 인식을 시작합니다...\n예: '나 목이 아프고 콧물이 나와'\n→ 감기 증상이 의심됩니다. 가까운 이비인후과를 소개해드리겠습니다.");
       // 실제 GPT 음성 API 연동은 여기에 추가
@@ -188,6 +214,3 @@
   </script>
 </body>
 </html>
-
-
-
